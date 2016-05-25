@@ -1,0 +1,11 @@
+[main]
+    problem = Warehouse Location
+files =
+    Customer.java
+    GenoType.java
+    Main.java
+    WareHouse.java
+build =
+    javac Main.java
+run =
+    java Main
