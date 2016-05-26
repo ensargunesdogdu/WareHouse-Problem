@@ -2,19 +2,19 @@
  * Created by z003b09e on 25.05.2016.
  */
 public class GenoType implements Comparable<GenoType> {
-    int[] match;
+    Integer[] match;
     Double fitness;
 
-    public GenoType(int[] match, double feasible) {
+    public GenoType(Integer[] match, double feasible) {
         this.match = match;
         this.fitness = feasible;
     }
 
-    public int[] getMatch() {
+    public Integer[] getMatch() {
         return match;
     }
 
-    public void setMatch(int[] match) {
+    public void setMatch(Integer[] match) {
         this.match = match;
     }
 
@@ -32,7 +32,7 @@ public class GenoType implements Comparable<GenoType> {
     }
 
     public void print() {
-        System.out.println(fitness);
+        System.out.printf("%.3f\n", fitness);
         StringBuilder stringBuilder = new StringBuilder();
         for (int i : match) {
             stringBuilder.append(i).append(" ");

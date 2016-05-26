@@ -3,9 +3,9 @@
 files =
     Customer.java
     GenoType.java
-    Main.java
+    Solver.java
     WareHouse.java
 build =
-    javac Main.java
+    javac Solver.java
 run =
-    java Main
+    java Solver %%f
