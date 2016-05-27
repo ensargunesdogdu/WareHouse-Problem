@@ -6,9 +6,8 @@ import java.util.*;
 /**
  * Created by ens on 3/22/16.
  */
+//python submit.pyc 5 -u gunesdogdu16@itu.edu.tr -p fojyidga -b
 public class Solver {
-
-
 //    static WareHouse[] wareHouses;
 //    static Customer[] customers;
 
@@ -43,6 +42,6 @@ public class Solver {
             customers[i] = new Customer(Integer.valueOf(demand), costsDouble);
         }
         Problem problem = new Problem(customers, wareHouses);
-        problem.solve();
+        problem.doubleSolve();
     }
 }

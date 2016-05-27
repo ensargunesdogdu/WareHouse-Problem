@@ -5,21 +5,47 @@ import java.util.*;
  */
 public class Problem {
     static Random random = new Random();
-    static int pmutation = 5; //out of 10
-    static int popSize = 1000;
+    static int pmutation = 8; //out of 10
+    static int popSize = 1200;
     static int maxExecution = 100;
     static double replaceRatio = 0.1;
-    static double offSpringRation = 0.2;
+    static double offSpringRation = 0.5;
+    int pBestValue = 15; //out of 100
+    double initChangeRatio = 0.4;
+
     private Customer[] customers;
     private WareHouse[] wareHouses;
+    int geneLength;
+
+    static Double lastFeasibleNumber = null;
+    static double lastFeasibleDomain = 1.02;
 
     public Problem(Customer[] customers, WareHouse[] wareHouses) {
         this.customers = customers;
         this.wareHouses = wareHouses;
+        this.geneLength = customers.length;
     }
 
-    public void solve() {
-        List<GenoType> population = createInitialPopulation(customers, wareHouses);
+    int iterationCount = 3;
+
+    public void doubleSolve() {
+        List<GenoType> pop = null;
+        for (int i = 0; i < iterationCount; i++) {
+            pop = solve(pop);
+        }
+        printBestOne(pop);
+    }
+
+    public List<GenoType> solve(List<GenoType> pop) {
+        List<GenoType> population = createInitialPopulation();
+        if (pop != null) {
+            Collections.sort(population);
+            Collections.sort(pop);
+            for (int i = 0; i < popSize * initChangeRatio; i++) {
+                population.remove(popSize - 1 - i);
+                population.add(popSize - 1 - i, pop.get(i));
+            }
+        }
         int nofOffsprings = (int) (offSpringRation * popSize);
         for (int i = 0; i < maxExecution; i++) {
             Collections.sort(population);
@@ -31,8 +57,10 @@ public class Problem {
                 population.add(removeIndex, offSprings.get(nofOffsprings - 1 - j));
             }
             mutatePopulation(population);
+//            System.out.println("i = " + i);
         }
-        printBestOne(population);
+//        System.out.println(" End of solve");
+        return population;
     }
 
     private static void mutatePopulation(List<GenoType> population) {
@@ -42,14 +70,13 @@ public class Problem {
                 genoType.mutate();
             }
         }
-
     }
 
     private List<GenoType> createOffsprings(List<GenoType> population, int numberOfParentWillBeReplaced, WareHouse[] wareHouses, Customer[] customers) {
         List<GenoType> list = new ArrayList<>();
         for (int i = 0; i < numberOfParentWillBeReplaced * 2; i = i + 2) {
             double feasible = -1;
-            int[] offSpring = new int[population.get(0).getMatch().length];
+            int[] offSpring = new int[geneLength];
             while (feasible <= 0) {
                 offSpring = population.get(i).matchWith(population.get(i + 1));
                 feasible = isFeasible(offSpring);
@@ -64,28 +91,34 @@ public class Problem {
         initialPopulation.get(0).print();
     }
 
-    private List<GenoType> createInitialPopulation(Customer[] customers, WareHouse[] wareHouses) {
+    private List<GenoType> createInitialPopulation() {
         List<GenoType> population = new LinkedList<GenoType>();
         for (int i = 0; i < popSize; i++) {
-            population.add(createGene(customers, wareHouses));
+            population.add(createGene());
         }
         return population;
     }
 
-    private GenoType createGene(Customer[] customers, WareHouse[] wareHouses) {
-        int[] match = new int[customers.length];
+
+    private GenoType createGene() {
+        int[] match = new int[geneLength];
         double feasible = -1;
         while (feasible <= 0) {
-            for (int i = 0; i < match.length; i++) {
-                match[i] = random.nextInt(wareHouses.length);
+            for (int i = 0; i < geneLength; i++) {
+                if (random.nextInt(100) < pBestValue) {
+                    match[i] = getCustomerBest(i);
+                } else
+                    match[i] = random.nextInt(wareHouses.length);
             }
             feasible = isFeasible(match);
         }
         return new GenoType(match, feasible, this);
     }
 
-    static Double lastFeasibleNumber = null;
-    static double lastFeasibleDomain = 1.05;
+    private int getCustomerBest(int customerIndex) {
+        Customer customer = customers[customerIndex];
+        return customer.getBestWareHouse(wareHouses);
+    }
 
     public double isFeasible(int[] match) {
         return isFeasible(match, true);
@@ -93,6 +126,10 @@ public class Problem {
 
     public double isFeasible(int[] match, boolean checkLast) {
         resetRemaininCapacities(wareHouses);
+        return getFitness(match);
+    }
+
+    private double getFitness(int[] match) {
         double fitness = 0.0;
         for (int i = 0; i < match.length; i++) {
             int i1 = match[i];
@@ -106,12 +143,6 @@ public class Problem {
                 return -1;
             fitness += customers[i].getCostToWareHouses()[i1];
         }
-        if (checkLast) {
-            if (lastFeasibleNumber == null)
-                lastFeasibleNumber = fitness;
-            if (lastFeasibleNumber * lastFeasibleDomain < fitness)
-                return -1;
-        }
         return fitness;
     }
 
@@ -120,5 +151,17 @@ public class Problem {
             wareHouse.setRemainingCapacity(wareHouse.getCapacity());
             wareHouse.setAdded(false);
         }
+    }
+
+    public WareHouse[] getWareHouses() {
+        return wareHouses;
+    }
+
+    public void setWareHouses(WareHouse[] wareHouses) {
+        this.wareHouses = wareHouses;
+    }
+
+    public Customer[] getCustomers() {
+        return customers;
     }
 }

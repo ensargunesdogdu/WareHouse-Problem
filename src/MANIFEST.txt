@@ -5,6 +5,7 @@ files =
     GenoType.java
     Solver.java
     WareHouse.java
+    Problem.java
 build =
     javac Solver.java
 run =
