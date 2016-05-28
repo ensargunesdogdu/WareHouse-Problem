@@ -3,13 +3,13 @@ import java.util.Random;
 /**
  * Created by z003b09e on 25.05.2016.
  */
-public class GenoType implements Comparable<GenoType> {
+public class Chromosome implements Comparable<Chromosome> {
     int[] match;
     Double fitness;
     private Problem problem;
     Random random = new Random();
 
-    public GenoType(int[] match, double feasible, Problem problem) {
+    public Chromosome(int[] match, double feasible, Problem problem) {
         this.match = match;
         this.fitness = feasible;
         this.problem = problem;
@@ -32,7 +32,7 @@ public class GenoType implements Comparable<GenoType> {
     }
 
     @Override
-    public int compareTo(GenoType o) {
+    public int compareTo(Chromosome o) {
         if (fitness > o.getFitness())
             return 1;
         else if (fitness.equals(o.getFitness()))
@@ -42,7 +42,7 @@ public class GenoType implements Comparable<GenoType> {
     }
 
     public void print() {
-        System.out.format("%.3f%n", fitness);     // -->  "3.142"
+        System.out.format("%.3f%n", fitness);
         StringBuilder stringBuilder = new StringBuilder();
         for (int i : match) {
             stringBuilder.append(i).append(" ");
@@ -50,7 +50,7 @@ public class GenoType implements Comparable<GenoType> {
         System.out.println(stringBuilder.toString());
     }
 
-    public int[] matchWith(GenoType genoType) {
+    public int[] matchWith(Chromosome genoType) {
         int[] offSpring = new int[match.length];
         Customer[] customers = problem.getCustomers();
         for (int i = 0; i < match.length; i++) {

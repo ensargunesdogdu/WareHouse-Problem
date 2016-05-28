@@ -29,15 +29,15 @@ public class Problem {
     int iterationCount = 3;
 
     public void doubleSolve() {
-        List<GenoType> pop = null;
+        List<Chromosome> pop = null;
         for (int i = 0; i < iterationCount; i++) {
             pop = solve(pop);
         }
         printBestOne(pop);
     }
 
-    public List<GenoType> solve(List<GenoType> pop) {
-        List<GenoType> population = createInitialPopulation();
+    public List<Chromosome> solve(List<Chromosome> pop) {
+        List<Chromosome> population = createInitialPopulation();
         if (pop != null) {
             Collections.sort(population);
             Collections.sort(pop);
@@ -49,7 +49,7 @@ public class Problem {
         int nofOffsprings = (int) (offSpringRation * popSize);
         for (int i = 0; i < maxExecution; i++) {
             Collections.sort(population);
-            List<GenoType> offSprings = createOffsprings(population, nofOffsprings, wareHouses, customers);
+            List<Chromosome> offSprings = createOffsprings(population, nofOffsprings, wareHouses, customers);
             Collections.sort(offSprings);
             for (int j = 0; j < nofOffsprings; j++) {
                 int removeIndex = popSize - 1 - j;
@@ -63,8 +63,8 @@ public class Problem {
         return population;
     }
 
-    private static void mutatePopulation(List<GenoType> population) {
-        for (GenoType genoType : population) {
+    private static void mutatePopulation(List<Chromosome> population) {
+        for (Chromosome genoType : population) {
             int i = random.nextInt(10);
             if (i > pmutation) {
                 genoType.mutate();
@@ -72,8 +72,8 @@ public class Problem {
         }
     }
 
-    private List<GenoType> createOffsprings(List<GenoType> population, int numberOfParentWillBeReplaced, WareHouse[] wareHouses, Customer[] customers) {
-        List<GenoType> list = new ArrayList<>();
+    private List<Chromosome> createOffsprings(List<Chromosome> population, int numberOfParentWillBeReplaced, WareHouse[] wareHouses, Customer[] customers) {
+        List<Chromosome> list = new ArrayList<>();
         for (int i = 0; i < numberOfParentWillBeReplaced * 2; i = i + 2) {
             double feasible = -1;
             int[] offSpring = new int[geneLength];
@@ -81,18 +81,18 @@ public class Problem {
                 offSpring = population.get(i).matchWith(population.get(i + 1));
                 feasible = isFeasible(offSpring);
             }
-            list.add(new GenoType(offSpring, feasible, this));
+            list.add(new Chromosome(offSpring, feasible, this));
         }
         return list;
     }
 
-    private void printBestOne(List<GenoType> initialPopulation) {
+    private void printBestOne(List<Chromosome> initialPopulation) {
         Collections.sort(initialPopulation);
         initialPopulation.get(0).print();
     }
 
-    private List<GenoType> createInitialPopulation() {
-        List<GenoType> population = new LinkedList<GenoType>();
+    private List<Chromosome> createInitialPopulation() {
+        List<Chromosome> population = new LinkedList<Chromosome>();
         for (int i = 0; i < popSize; i++) {
             population.add(createGene());
         }
@@ -100,22 +100,33 @@ public class Problem {
     }
 
 
-    private GenoType createGene() {
+    private Chromosome createGene() {
         int[] match = new int[geneLength];
         double feasible = -1;
         while (feasible <= 0) {
-            for (int i = 0; i < geneLength; i++) {
-                if (random.nextInt(100) < pBestValue) {
-                    match[i] = getCustomerBest(i);
-                } else
-                    match[i] = random.nextInt(wareHouses.length);
+            if (random.nextBoolean()) {
+                for (int i = geneLength - 1; i >= 0; i--) {
+                    if (random.nextInt(100) < pBestValue) {
+                        match[i] = getCustomerBest(i,match);
+                    } else
+                        match[i] = random.nextInt(wareHouses.length);
+                }
+                feasible = isFeasible(match);
+            } else {
+                for (int i = 0; i < geneLength; i++) {
+                    if (random.nextInt(100) < pBestValue) {
+                        match[i] = getCustomerBest(i, match);
+                    } else
+                        match[i] = random.nextInt(wareHouses.length);
+                }
+                feasible = isFeasible(match);
             }
-            feasible = isFeasible(match);
+
         }
-        return new GenoType(match, feasible, this);
+        return new Chromosome(match, feasible, this);
     }
 
-    private int getCustomerBest(int customerIndex) {
+    private int getCustomerBest(int customerIndex, int[] match) {
         Customer customer = customers[customerIndex];
         return customer.getBestWareHouse(wareHouses);
     }
