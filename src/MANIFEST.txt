@@ -6,6 +6,7 @@ files =
     Solver.java
     WareHouse.java
     Problem.java
+    Report.txt
 build =
     javac Solver.java
 run =

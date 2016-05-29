@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * Created by ens on 3/22/16.
  */
-//python submit.pyc 3 -u gunesdogdu16@itu.edu.tr -p fojyidga -b
+//python submit.pyc 1 -u gunesdogdu16@itu.edu.tr -p fojyidga -b
 public class Solver {
 //    static WareHouse[] wareHouses;
 //    static Customer[] customers;

@@ -8,15 +8,12 @@ public class Problem {
     static int pmutation = 8; //out of 10
     static int popSize = 1200;
     static int maxExecution = 100;
-    static double replaceRatio = 0.1;
-    static double offSpringRation = 0.5;
+    static double offSpringRatio = 0.5;
     int pBestValue = 15; //out of 100
     double initChangeRatio = 0.4;
-
     private Customer[] customers;
     private WareHouse[] wareHouses;
     int geneLength;
-
     static Double lastFeasibleNumber = null;
     static double lastFeasibleDomain = 1.02;
 
@@ -46,7 +43,7 @@ public class Problem {
                 population.add(popSize - 1 - i, pop.get(i));
             }
         }
-        int nofOffsprings = (int) (offSpringRation * popSize);
+        int nofOffsprings = (int) (offSpringRatio * popSize);
         for (int i = 0; i < maxExecution; i++) {
             Collections.sort(population);
             List<Chromosome> offSprings = createOffsprings(population, nofOffsprings, wareHouses, customers);
