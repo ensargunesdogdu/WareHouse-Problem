@@ -1,0 +1,31 @@
+Student name:Ensar Gunesdogdu
+Student no:504151537
+
+Instance no:1
+
+Programming environment: IDE: Intellij IDEA 14.1.4
+                         JAVA : 1.8.0_91
+                         OS : Windows 7
+
+Description of approach used (max 200 words):
+I used some hybridization methods in this algorithm.
+I create initial population by random creation or greedy algorithm.
+Deciding which one to use is depends on a probability which is called pBestValue.
+After creation I create offspring from sorted population only best one are able to
+create offspring. Then I used elitism so I replaced the worst individuals of my
+population with offspring. Then I applied Flip mutation to this new population with
+some probability. Executed this method until max number of iteration reached.
+
+
+All relevant parameters and their settings:
+    int pmutation = 8;                 // Probability of a chromosome will get a mutation //out of 10
+    int popSize = 1200;                //Basically Population Size
+    int maxExecution = 100;            //Termination Criteria
+    double offSpringRatio = 0.5;       //Offspring ratio like here popsize is 1200 so 0.5*1200=600 offspring will be created in each iteration.
+    int pBestValue = 15;               //Probability of chromosome creation that will use greedy start //out of 100
+    double initChangeRatio = 0.4;      // hybird // what percentage of population will be copyied from previous runs.
+    int iterationCount = 3;            //Iteration count of algorithm  -> get first results and use some of them in next iterations as initial.
+
+
+References:
+All codes are written by me just based on slides.
